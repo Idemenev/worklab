@@ -13,6 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'v1', 'namespace' => 'Api\v1'], function () {
+
+    // Авторизованные
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::post('user/update', 'UserController@update');
+
+        Route::apiResource('products', 'ProductController');
+        Route::apiResource('categories', 'CategoryController');
+    });
+    Route::post('authenticate', 'UserController@authenticate');
+
+    // Товары в категории
+    Route::get('category-products/{category}', 'ProductController@categoryProducts')->where(['category' => '\d+']);
+
+    Route::get('products/{product}', 'ProductController@show')->where(['product' => '\d+']);
+
+    Route::get('categories', 'CategoryController@index');
 });

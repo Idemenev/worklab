@@ -34,7 +34,11 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        parent::report($exception);
+        //parent::report($exception);
+        if (!$msg = $exception->getMessage()) {
+            $msg = get_class($exception);
+        }
+        return response()->json(['error' => 1, 'message' => $msg], 400);
     }
 
     /**

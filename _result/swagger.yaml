@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  version: "1.0"
+  title: API WorkLab магазина
+  description: "Кодировка: UTF-8."
+
+servers:
+  - description: Dev
+    url: http://worklab/api/v1
+
+tags:
+  - name: Category
+    description: "Методы работы с категориями товаров"
+
+paths:
+  /categories:
+    get:
+      tags:
+        - Category
+      summary: "- список всех категорий"
+      description: "Метод получения списка всех категорий товаров"
+      responses:
+        '200':
+          description: Массив объектов категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+        '400':
+          $ref: '#/components/responses/400Error'
+
+    post:
+      tags:
+        - Category
+      summary: "- создание категории"
+      description: "Метод создания категории товаров"
+      requestBody:
+        $ref: '#/components/requestBodies/categoryName'
+      responses:
+        '200':
+          description: "Объект категории"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+        '400':
+          $ref: '#/components/responses/400Error'
+
+
+  /categories/{id}:
+    get:
+      tags:
+        - Category
+      summary: "- получение указанной категории"
+      description: "Метод получение данных указанной категории товаров"
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          description: Объект JSON с результатом запроса
+
+        '400':
+          $ref: '#/components/responses/400Error'
+
+    delete:
+      tags:
+        - Category
+      summary: "- удаление категории"
+      description: "Метод удаления категории товаров"
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          description: Объект JSON с результатом запроса
+
+        '400':
+          $ref: '#/components/responses/400Error'
+
+    put:
+      tags:
+        - Category
+      summary: "- обновление категории"
+      description: "Метод обновления данных категории товаров"
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      requestBody:
+        $ref: '#/components/requestBodies/categoryName'
+      responses:
+        '200':
+          description: Объект JSON с результатом запроса
+
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+        '400':
+          $ref: '#/components/responses/400Error'
+
+components:
+  schemas:
+    Category:
+      description: "Категория товара"
+      type: "object"
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        name:
+          type: string
+          maxLength: 256
+          example: 'Книги'
+        created_at:
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'
+          example: '2019-10-06 11:21:06'
+        updated_at:
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'
+          example: '2019-10-06 11:21:06'
+
+  requestBodies:
+    categoryName:
+      description: "Наименование категории"
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                maxLength: 256
+                example: 'Книги'
+
+  parameters:
+    categoryId:
+      name: "id"
+      in: "path"
+      description: "ID категории"
+      required: true
+      schema:
+        type: integer
+        format: int32
+
+  responses:
+    400Error:
+      description: "Ошибочный запрос"
+
+    404NotFound:
+      description: "Запрашиваймый объект не найден"
